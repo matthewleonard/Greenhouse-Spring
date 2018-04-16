@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Greenhouse-Spring:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="equipmentService-0.0.1.war">
+      <element id="artifact" artifact-name="Greenhouse-Spring:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,237 @@
+swagger: '2.0'
+info:
+  description: This is a server for use with Leonard Controllable Services
+  version: 1.0.0
+  title: Leonard Controllable Services
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: matt@leonardgarden.com
+basePath: /v1
+tags:
+  - name: equipment
+    description: Information about equipment
+  - name: equipment history
+    description: Information about equipment history
+schemes:
+  - http
+  - https
+paths:
+  /equipment:
+    get:
+      summary: Gets equipment
+      tags:
+        - equipment
+      responses:
+        '200':
+          description: List of equipment objects
+        '500':
+          description: Server Error
+    post:
+      summary: Creates a new equipment object
+      tags:
+        - equipment
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: equipmentData
+          required: true
+          description: JSON data representing an equipment object
+          schema:
+            $ref: '#/definitions/Equipment'
+      responses:
+        '200':
+          description: Equipment object Created
+        '500':
+          description: Server Error
+  '/equipment/{equipmentId}':
+    get:
+      summary: Returns information about a specified equipment object
+      tags:
+        - equipment
+      produces:
+        - application/json
+      parameters:
+        - name: equipmentId
+          in: path
+          required: true
+          description: Id of the equipment object to get information from
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: An equipment object
+          schema:
+            $ref: '#/definitions/Equipment'
+        '500':
+          description: Server Error
+    post:
+      summary: posts an action to equipment
+      tags:
+       - equipment
+      parameters:
+        - name: equipmentId
+          in: path
+          required: true
+          description: Id of the equipment object to get information from
+          type: integer
+          format: int64
+        - name: action
+          in: query
+          required: true
+          description: Id of the equipment object to get information from
+          type: string
+        - name: value
+          in: query
+          required: true
+          description: parameters to pass to action
+          type: string
+      responses:
+        '200':
+          description: Action successful
+        '500':
+          description: Server Error
+    put:
+      summary: Updates the equipment object
+      tags:
+        - equipment
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: equipmentId
+          required: true
+          description: Id of the equipment object to update
+          type: integer
+          format: int64
+        - in: body
+          name: equipmentData
+          required: true
+          description: JSON data representing an equipment object
+          schema:
+            $ref: '#/definitions/Equipment'
+      responses:
+        '200':
+          description: Equipment updated successfully
+        '500':
+          description: Server Error
+    delete:
+      summary: Deletes an equipment object
+      tags:
+        - equipment
+      parameters:
+        - in: path
+          name: equipmentId
+          required: true
+          description: Id of the equipment object to delete
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Equipment object deleted successfully
+        '500':
+          description: Server Error
+  '/equipment/{equipmentId}/history/':
+    get:
+      summary: Returns the equipment object history data for a given time period
+      tags:
+        - equipment
+      produces:
+        - application/json
+      parameters:
+        - name: startDate
+          in: query
+          type: string
+          description: The start datetime for the history range
+        - name: endDate
+          in: query
+          type: string
+          description: the end datetime for the history range
+        - name: equipmentId
+          in: path
+          required: true
+          description: Id of the equipment object to get history from
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Collection of history data in the given date range
+          schema:
+            $ref: '#/definitions/EquipmentHistory'
+        '500':
+          description: Server Error
+  /history/equipment/:
+    post:
+      summary: Adds a history record for an equipment object
+      tags:
+        - equipment history
+      parameters:
+        - name: equipmentHistoryData
+          in: body
+          required: true
+          description: JSON data representing an equipment history object
+          schema:
+            $ref: '#/definitions/EquipmentHistoryLog'
+      responses:
+        '200':
+          description: History data added successfully
+        '500':
+          description: Server Error
+definitions:
+  Equipment:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      controller_id:
+        type: integer
+      pin_location:
+        type: string
+    example:
+      id: 22
+      name: Greenhouse Heater
+      description: Temperature sensor for basement greenhouse
+      controller_id: 12
+      pin_location: 7
+  EquipmentHistoryLog:
+    type: object
+    properties:
+      id:
+        type: integer
+      timestamp:
+        type: string
+      equipment_id:
+        type: integer
+      value:
+        type: string
+    example:
+      id: -1
+      timestamp: 2018-01-30T08:15:00.000Z
+      equipment_id: 22
+      value: 0
+  EquipmentHistory:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        timestamp:
+          type: string
+        equipment_id:
+          type: integer
+        value:
+          type: string
+    example:
+      - id: 111
+        timestamp: 2018-01-30T08:15:00.000Z
+        equipment_id: 22
+        value: 0
+      - id: 112
+        timestamp: 2018-01-30T08:30:00.000Z
+        equipment_id: 22
+        value: 1
